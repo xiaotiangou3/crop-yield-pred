@@ -5,6 +5,7 @@ import joblib
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import os
 
 app = FastAPI(title="AgriSync Yield Prediction Engine")
 
