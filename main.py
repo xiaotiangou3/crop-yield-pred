@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
 import pandas as pd
@@ -7,10 +8,22 @@ from datetime import datetime
 
 app = FastAPI(title="AgriSync Yield Prediction Engine")
 
+# --- 2. Configure CORS ---
+# In production, replace ["*"] with your actual frontend URL for better security
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
+
 # --- Load Assets ---
-MODEL_PATH = "agrisync_v2_model.pkl"
-MODEL_WITHOUT_CROP_PATH = "agrisync_v2_model_without_crop.pkl"
-ENCODER_PATH = "crop_encoder.pkl"
+# Using os.path.join helps prevent path issues on different operating systems
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "agrisync_v2_model.pkl")
+MODEL_WITHOUT_CROP_PATH = os.path.join(BASE_DIR, "agrisync_v2_model_without_crop.pkl")
+ENCODER_PATH = os.path.join(BASE_DIR, "crop_encoder.pkl")
 
 try:
     model = joblib.load(MODEL_PATH)
